@@ -6,6 +6,9 @@ import bodyParser from 'body-parser'
 import rateLimit from 'express-rate-limit'
 import morgan from 'morgan'
 import apiRoutes from './routes/api'
+import { formatMessage } from './utils/formatMessage'
+
+const botName = 'Chat Room Bot'
 
 const uri = 'mongodb://test:test123@ds125574.mlab.com:25574/nodejs-boilerplate'
 mongoose.set('useCreateIndex', true)
@@ -37,7 +40,23 @@ app.use('/api/v1/', apiRoutes)
 
 io.on('connection', (socket) => {
   console.log('A new web socket connection has been established....')
-  socket.emit('message', 'Welcome to chat')
+  socket.emit('message', formatMessage(botName, 'Welcome to chat'))
+
+  socket.broadcast.emit(
+    'message',
+    formatMessage(botName, 'A user has joined the chat')
+  )
+  socket.on('chatMessage', (msg) => {
+    io.emit('message', formatMessage('USER:', msg))
+  })
+
+  socket.on('typing', () => {
+    io.emit('message', '...')
+  })
+
+  socket.on('disconnect', () => {
+    socket.emit('message', formatMessage(botName, 'A user has left the chat'))
+  })
 })
 
 server.listen(port, () =>
