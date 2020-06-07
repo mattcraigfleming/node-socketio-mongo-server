@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
 import rateLimit from 'express-rate-limit'
 import morgan from 'morgan'
+import cors from 'cors'
 import apiRoutes from './routes/api'
 import { formatMessage } from './utils/formatMessage'
 
@@ -31,6 +32,8 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 })
+
+app.use(cors())
 
 app.use(limiter)
 
