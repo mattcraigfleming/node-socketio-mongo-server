@@ -62,6 +62,8 @@ io.on('connection', (socket) => {
   })
 })
 
+// sockets.startSocketServer(app);
+
 server.listen(port, () =>
   console.log(`Server listening on: http://localhost:${port}`)
 )
